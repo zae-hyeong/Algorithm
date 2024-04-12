@@ -3,19 +3,12 @@ function solution(num) {
 
   let count = 0;
 
-  while (n !== 1) {
-
-    console.log(n);
-
-    if (n % 2) n = 3 * n + 1;
-    else n = n / 2;
-
+  while (n !== 1 || count <= 500) {
+    n = n % 2 ? 3 * n + 1 : n / 2;
     count++;
-
-    if (count > 500) return -1;
   }
 
-  return count;
+  return count === 1 ? count : -1;
 }
 
 console.log(solution(6));
