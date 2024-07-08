@@ -1,16 +1,19 @@
 let givenInput = [];
-const readline = require('readline').createInterface({
+const readline = require("readline").createInterface({
   input: process.stdin,
   output: process.stdout,
 });
-readline.on('line', function(line) {
-  console.log("AA:" + line.trim());
-  givenInput.push(line.trim());
-}).on('close', function(){
-  solution(givenInput);
-  process.exit();
-});
+readline
+  .on("line", function (line) {
+    givenInput.push(line.trim());
+  })
+  .on("close", function () {
+    solution(givenInput);
+    process.exit();
+  });
 
-function solution(input) {
-  console.log(input);
-};
+function solution(inputLines) {
+  const [numOfInput, ...input] = [...inputLines];
+
+  
+}
