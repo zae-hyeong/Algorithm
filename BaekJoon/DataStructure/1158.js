@@ -25,9 +25,9 @@ class CicularLinkedList {
   push(data) {
     if (this.head === null) {
       this.head = new Node(data);
-      this.head.next = this.head;
       this.tail = this.head;
       this.current = this.head;
+      this.head.next = this.head;
       this.size++;
       return;
     }
@@ -38,24 +38,29 @@ class CicularLinkedList {
   }
 
   popCurrent() {
+    let returnVal;
     if (this.size === 1) {
+      returnVal = this.current.data;
       this.head = null;
       this.tail = null;
+      this.current = null;
       this.size = 0;
-      return this.current.data;
+      return returnVal;
     }
+
     let prevNode = this.head;
-    let data;
-    while (prevNode.next.data !== this.current.data) {
+    while (prevNode.next !== this.current) {
       prevNode = prevNode.next;
     }
+    if (this.current === this.head) this.head = this.head.next;
+    if (this.current === this.tail) this.tail = this.prevNode;
+
     prevNode.next = this.current.next;
-    if (this.current.data === this.head.data) this.head = this.head.next;
-    if (this.current.data === this.tail.data) this.tail = this.prevNode;
-    data = this.current.data;
+
+    returnVal = this.current.data;
     this.current = this.current.next;
     this.size--;
-    return data;
+    return returnVal;
   }
 
   moveCurrent(num) {
@@ -88,7 +93,6 @@ function solution(input) {
   while (list.size) {
     list.moveCurrent(realJump);
     result.push(list.popCurrent());
-    console.log("RESULT ARRAY : " + result);
   }
-  console.log("FINAL : " + result);
+  console.log("<" + result.join(', ') + ">");
 }
