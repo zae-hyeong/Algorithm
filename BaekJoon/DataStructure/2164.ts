@@ -10,14 +10,17 @@ readline.on("line", function (line) {
 interface NodeI {
   data: number;
   next: NodeI | null;
+  prev: NodeI | null;
 }
 
 class Data implements NodeI {
   data: number;
   next: NodeI | null;
+  prev: NodeI | null;
   constructor(data: number) {
     this.data = data;
     this.next = null;
+    this.prev = null;
   }
 }
 
@@ -33,10 +36,11 @@ class Queue {
 
   push(data: number) {
     const newNode = new Data(data);
-    if (!this.head) {
-      this.head = newNode;
-    } else {
+    if (this.tail) {
+      this.tail.prev = newNode;
       newNode.next = this.tail;
+    } else {
+      this.head = newNode;
     }
     this.tail = newNode;
     this.size++;
@@ -54,12 +58,8 @@ class Queue {
       return returnVal;
     }
 
-    let prevNode = this.tail;
-
-    while (prevNode?.next !== this.head) prevNode = prevNode!.next;
-
-    this.head = prevNode;
-    this.head.next = null;
+    this.head = this.head.prev;
+    this.head!.next = null;
     this.size--;
     return returnVal;
   }
