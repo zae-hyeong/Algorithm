@@ -129,17 +129,20 @@ function solution(inputLines: string[]) {
   let stringNum: string;
 
   const numOfCommand = parseInt(numOfInput);
+  const answer: number[] = [];
 
   for (let i = 0; i < numOfCommand; i++) {
     [command, stringNum] = [...input[i].trim().split(" ")];
     commandNum = parseInt(stringNum);
     if (command === "push_front") deque.pushFront(commandNum);
     else if (command === "push_back") deque.pushBack(commandNum);
-    else if (command === "pop_front") console.log(deque.popFront());
-    else if (command === "pop_back") console.log(deque.popBack());
-    else if (command === "size") console.log(deque.getSize());
-    else if (command === "empty") console.log(deque.isEmpty());
-    else if (command === "front") console.log(deque.getFront());
-    else if (command === "back") console.log(deque.getBack());
+    else if (command === "pop_front") answer.push(deque.popFront());
+    else if (command === "pop_back") answer.push(deque.popBack());
+    else if (command === "size") answer.push(deque.getSize());
+    else if (command === "empty") answer.push(deque.isEmpty());
+    else if (command === "front") answer.push(deque.getFront());
+    else if (command === "back") answer.push(deque.getBack());
   }
+
+  console.log(answer.join("\n"));
 }

@@ -114,6 +114,7 @@ function solution(inputLines) {
     var commandNum;
     var stringNum;
     var numOfCommand = parseInt(numOfInput);
+    var answer = [];
     for (var i = 0; i < numOfCommand; i++) {
         _a = __spreadArray([], input[i].trim().split(" "), true), command = _a[0], stringNum = _a[1];
         commandNum = parseInt(stringNum);
@@ -122,16 +123,17 @@ function solution(inputLines) {
         else if (command === "push_back")
             deque.pushBack(commandNum);
         else if (command === "pop_front")
-            console.log(deque.popFront());
+            answer.push(deque.popFront());
         else if (command === "pop_back")
-            console.log(deque.popBack());
+            answer.push(deque.popBack());
         else if (command === "size")
-            console.log(deque.getSize());
+            answer.push(deque.getSize());
         else if (command === "empty")
-            console.log(deque.isEmpty());
+            answer.push(deque.isEmpty());
         else if (command === "front")
-            console.log(deque.getFront());
+            answer.push(deque.getFront());
         else if (command === "back")
-            console.log(deque.getBack());
+            answer.push(deque.getBack());
     }
+    console.log(answer.join("\n"));
 }
