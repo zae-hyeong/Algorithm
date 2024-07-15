@@ -12,6 +12,10 @@ readline
     process.exit();
   });
 
+//식별자로 사용될 랜덤 상수
+const FRONT = 18564;
+const BACK = 89156;
+
 class DNode {
   data: number;
   next: DNode | null;
@@ -33,41 +37,31 @@ class Deque {
     this.size = 0;
   }
 
-  pushFront(data: number) {
+  push(data: number, option: number) {
     const newNode = new DNode(data);
 
-    if (!this.front) {
+    if (!this.front || !this.back) {
       this.front = newNode;
       this.back = newNode;
       this.size++;
       return newNode;
     }
 
-    this.front.prev = newNode;
-    newNode.next = this.front;
-    this.front = newNode;
-    this.size++;
-    return newNode;
-  }
-
-  pushBack(data: number) {
-    const newNode = new DNode(data);
-    if (!this.back) {
+    if (option === FRONT) {
+      this.front.prev = newNode;
+      newNode.next = this.front;
       this.front = newNode;
+    } else if (option === BACK) {
+      this.back.next = newNode;
+      newNode.prev = this.back;
       this.back = newNode;
-      this.size++;
-      return;
     }
-
-    this.back.next = newNode;
-    newNode.prev = this.back;
-    this.back = newNode;
     this.size++;
     return;
   }
 
-  popFront() {
-    if (!this.front) return -1;
+  pop(option: number): number {
+    if (!this.front || !this.back) return -1;
 
     const returnVal = this.front.data;
 
@@ -78,36 +72,25 @@ class Deque {
       return returnVal;
     }
 
-    this.front = this.front.next;
-    this.front!.prev = null;
-    this.size--;
-    return returnVal;
-  }
-
-  popBack() {
-    if (!this.back) return -1;
-
-    const returnVal = this.back.data;
-
-    if (this.back === this.front) {
-      this.front = null;
-      this.back = null;
-      this.size = 0;
-      return returnVal;
+    if (option === FRONT) {
+      this.front = this.front.next;
+      this.front!.prev = null;
+    } else {
+      this.back = this.back.prev;
+      this.back!.next = null;
     }
-
-    this.back = this.back.prev;
-    this.back!.next = null;
     this.size--;
     return returnVal;
   }
 
-  getFront() {
-    return this.front !== null ? this.front.data : -1;
-  }
-
-  getBack() {
-    return this.back !== null ? this.back.data : -1;
+  get(option: number) {
+    return option === FRONT
+      ? this.front !== null
+        ? this.front.data
+        : -1
+      : this.back !== null
+      ? this.back.data
+      : -1;
   }
 
   getSize() {
@@ -134,14 +117,14 @@ function solution(inputLines: string[]) {
   for (let i = 0; i < numOfCommand; i++) {
     [command, stringNum] = [...input[i].trim().split(" ")];
     commandNum = parseInt(stringNum);
-    if (command === "push_front") deque.pushFront(commandNum);
-    else if (command === "push_back") deque.pushBack(commandNum);
-    else if (command === "pop_front") answer.push(deque.popFront());
-    else if (command === "pop_back") answer.push(deque.popBack());
+    if (command === "push_front") deque.push(commandNum, FRONT);
+    else if (command === "push_back") deque.push(commandNum, BACK);
+    else if (command === "pop_front") answer.push(deque.pop(FRONT));
+    else if (command === "pop_back") answer.push(deque.pop(BACK));
     else if (command === "size") answer.push(deque.getSize());
     else if (command === "empty") answer.push(deque.isEmpty());
-    else if (command === "front") answer.push(deque.getFront());
-    else if (command === "back") answer.push(deque.getBack());
+    else if (command === "front") answer.push(deque.get(FRONT));
+    else if (command === "back") answer.push(deque.get(BACK));
   }
 
   console.log(answer.join("\n"));
