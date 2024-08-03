@@ -59,8 +59,7 @@ class Heap {
     return currentNode.data;
   }
 
-  traversal() {
-    // inOrderTraversal
+  traversal() {   // inOrderTraversal
     const result = [];
     function indore(root) {
       if (root === null) return;
@@ -70,12 +69,34 @@ class Heap {
     }
 
     indore(this.root);
-    console.log(result.join(', '));
+    console.log(result.join(", "));
   }
 
-  preOrderTraversal() {}
+  preOrderTraversal() {
+    const result = [];
+    function indore(root) {
+      if (root === null) return;
+      result.push(root.data);
+      indore(root.left);
+      indore(root.right);
+    }
 
-  postOrderTraversal() {}
+    indore(this.root);
+    console.log(result.join(", "));
+  }
+
+  postOrderTraversal() {
+    const result = [];
+    function indore(root) {
+      if (root === null) return;
+      indore(root.left);
+      indore(root.right);
+      result.push(root.data);
+    }
+
+    indore(this.root);
+    console.log(result.join(", "));
+  }
 }
 
 function test() {
