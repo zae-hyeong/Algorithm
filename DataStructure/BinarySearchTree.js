@@ -39,6 +39,38 @@ class Heap {
     }
   }
 
+  push2(data) {
+    const newNode = new Data(data);
+
+    function move(root, newNode) {
+      if (root === null) return;
+
+      if (newNode.data > root.data) {
+        if (root.right === null) {
+          root.right = newNode;
+          return;
+        }
+        move(root.right);
+      } else if (newNode.data <= root.data){ 
+        if (root.left === null) {
+          root.left = newNode;
+          return;
+        }
+        move(root.left)};
+    }
+
+    move(this.root, newNode);
+    return;
+  }
+
+  getMin() {
+    let currentNode = this.root;
+
+    while (currentNode.left !== null) currentNode = currentNode.left;
+
+    return currentNode.data;
+  }
+
   getMax() {
     let currentNode = this.root;
 
@@ -59,7 +91,8 @@ class Heap {
     return currentNode.data;
   }
 
-  traversal() {   // inOrderTraversal
+  traversal() {
+    // inOrderTraversal
     const result = [];
     function indore(root) {
       if (root === null) return;
@@ -102,16 +135,14 @@ class Heap {
 function test() {
   const heap = new Heap();
 
-  heap.push(40);
-  heap.push(45);
-  heap.push(30);
-  heap.push(27);
-  heap.push(35);
-  heap.push(32);
-  heap.push(37);
+  heap.push2(40);
+  heap.push2(45);
+  heap.push2(30);
+  heap.push2(27);
+  heap.push2(35);
+  heap.push2(32);
+  heap.push2(37);
 
-  console.log(heap.getMin());
-  console.log(heap.getMax());
   console.log(heap.traversal());
 }
 

@@ -11,11 +11,25 @@ class Heap {
         this.heap[index] = data;
         return;
       }
-      if (data > this.heap[index]) move(2*index + 2, data);
-      else if (data < this.heap[index]) move(2*index + 1, data);
+      if (data > this.heap[index]) move(2 * index + 2, data);
+      else if (data < this.heap[index]) move(2 * index + 1, data);
     };
 
     move(0, data);
+  }
+
+  traversal() {
+    const result = [];
+    const move = (index) => {
+      if (this.heap[index] === undefined) return;
+
+      move(2 * index + 1);
+      result.push(this.heap[index]);
+      move(2 * index + 2);
+    };
+    move(0);
+
+    console.log(result.join(", "));
   }
 }
 
@@ -32,9 +46,7 @@ function test() {
 
   console.log(heap.heap);
 
-  // console.log(heap.getMin());
-  // console.log(heap.getMax());
-  // console.log(heap.traversal());
+  console.log(heap.traversal());
 }
 
 test();
