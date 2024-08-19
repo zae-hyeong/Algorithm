@@ -9,36 +9,32 @@ function solution(s) {
 }
 
 function isBrackets(s) {
-    const b1Stack = [];  // []
-    const b2Stack = [];  // {}
-    const b3Stack = [];  // ()
+    const bracketStack = [];
 
-    for (b of s) {
-
+    let c = '';
+    for (b of s) { 
         switch (b) {
-            case "[":
-                b1Stack.push(b);
-                break;
-            case "{":
-                b2Stack.push(b);
-                break;
-            case "(":
-                b3Stack.push(b);
+            case "[" :
+            case "{" :
+            case "(" :
+                bracketStack.push(b);
                 break;
             case "]":
-                if (b1Stack.pop() === undefined) return false;
+                c = bracketStack.pop();
+                if (c === undefined || c !== "[") return false;
                 break;
             case "}":
-                if (b2Stack.pop() === undefined) return false;
+                c = bracketStack.pop();
+                if (c === undefined || c !== "{") return false;
                 break;
             case ")":
-                if (b3Stack.pop() === undefined) return false;
+                c = bracketStack.pop();
+                if (c === undefined || c !== "(") return false;
                 break;
         }
     }
 
-    if (b1Stack.length && b2Stack.length && b3Stack.length) return false;
-    return true;
+    return bracketStack.length === 0 ? true : false;
 }
 
 const test = () => {
