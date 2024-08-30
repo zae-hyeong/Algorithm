@@ -1,26 +1,23 @@
 function solution(progresses, speeds) {
   const answer = [];
 
-  const costDates = new Array(progresses.length);
+  const costDates = progresses.map((progress, index) =>
+    Math.ceil((100 - progress) / speeds[index])
+  );
 
-  for (let i = 0; i < progresses.length; i++) {
-    costDates[i] = Math.ceil((100 - progresses[i]) / speeds[i]);
-  }
-
-  let dayPassed = 0;
+  let dayPassed = costDates[0];
   let count = 0;
 
-  while (costDates.length) {
-    dayPassed = Math.max(dayPassed, costDates.shift());
-    count = 1;
-
-    while (costDates[0] <= dayPassed) {
-      costDates.shift();
+  for (let i = 0; i < costDates.length; i++) {
+    if (costDates[i] <= dayPassed) {
       count++;
+    } else {
+      dayPassed = Math.max(dayPassed, costDates[i]);
+      answer.push(count);
+      count = 1;
     }
-
-    answer.push(count);
   }
+  answer.push(count);
 
   return answer;
 }
