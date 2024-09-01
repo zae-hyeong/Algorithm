@@ -1,8 +1,43 @@
-function solution(n, k, cmds) {
-  const result = new Array(n).fill("O");
+class Cell {
+  constructor(n, k) {
+    this.arr = new Array(n).fill("O");
+    this.curr = k;
+    this.stack = [];
+  }
 
-  let currentPosition = k;
-  const stack = [];
+  down(num) {
+    for (let i = 0; i < num; i++) {
+      if (this.arr[this.curr] === "O") this.curr++;
+      else i--;
+    }
+    if (this.curr >= this.arr.length) this.up(1);
+  }
+
+  up(num) {
+    for (let i = 0; i < num; i++) {
+      if (this.arr[this.curr] === "O") this.curr--;
+      else i--;
+    }
+    if (this.curr < 0) this.down(1);
+  }
+
+  removeCurrent() {
+    arr[curr] = "X";
+    this.stack.push(curr);
+    this.down(1);
+  }
+
+  restore() {
+    this.arr[this.stack.pop()] = "O";
+  }
+
+  getAllCells() {
+    return this.arr.join("");
+  }
+}
+
+function solution(n, k, cmds) {
+  const cell = new Cell();
 
   for (const cmd of cmds) {
     let [command, num] = cmd.split(" ");
@@ -10,29 +45,21 @@ function solution(n, k, cmds) {
 
     switch (command) {
       case "U":
-        for (let i = 0; i < num; i++) {
-          if (result[currentPosition] === "O") currentPosition++;
-        }
+        cell.up(num);
         break;
       case "D":
-        for (let i = 0; i < num; i++) {
-          if (result[currentPosition] === "O") currentPosition--;
-        }
+        cell.down(num);
         break;
       case "C":
-        // result[currentPosition] = "X";
-        // if(currentPosition < n - 1) currentPosition++;
-        // else {
-        //   while () {
-        //   }
-        // }
+        cell.removeCurrent();
         break;
       case "Z":
+        cell.restore();
         break;
     }
   }
 
-  return result.join("");
+  cell.getAllCells();
 }
 
 console.log(
