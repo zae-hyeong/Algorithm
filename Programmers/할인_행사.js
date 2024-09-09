@@ -50,15 +50,42 @@ function solution(want, number, discount) {
 
     front += 1;
 
-    discountItems[discount[rear + 1]] = discountItems[discount[rear + 1]] + 1 || 1;
+    discountItems[discount[rear + 1]] =
+      discountItems[discount[rear + 1]] + 1 || 1;
     rear += 1;
   }
 
   return answer;
 }
 
+function solution2(want, number, discount) {
+  let answer = 0;
+
+  const wandtedItems = {};
+
+  for (let i = 0; i < want.length; i++) {
+    wandtedItems[want[i]] = number[i];
+  }
+
+  const totalNumOfWantedList = number.reduce((acc, cur) => acc + cur, 0);
+
+  for (let i = 0; i <= discount.length - totalNumOfWantedList; i++) {
+    const discountItems = {};
+
+    for (let j = i; j < i + totalNumOfWantedList; j++) {
+      discountItems[discount[j]] = (discountItems[discount[j]] || 0) + 1;
+    }
+
+    if (isObjectSame(wandtedItems, discountItems)) {
+      answer += 1;
+    }
+  }
+
+  return answer;
+}
+
 console.log(
-  solution(
+  solution2(
     ["banana", "apple", "rice", "pork", "pot"],
     [3, 2, 2, 2, 1],
     [
@@ -80,7 +107,7 @@ console.log(
   )
 );
 console.log(
-  solution(
+  solution2(
     ["apple"],
     [10],
     [
