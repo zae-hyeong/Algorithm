@@ -1,26 +1,21 @@
 function solution(records) {
-  const answer = [];
+  const log = [];
 
   const idToNickName = new Set();
+  const stageComment = {
+    Enter: "님이 들어왔습니다.",
+    Leave: "님이 나갔습니다.",
+  };
 
   for (const record of records) {
     const [cmd, userId, nickName] = record.split(" ");
 
-    switch (cmd) {
-      case "Enter":
-        idToNickName[userId] = nickName;
-        answer.push([userId, "님이 들어왔습니다."]);
-        break;
-      case "Leave":
-        answer.push([userId, "님이 나갔습니다."]);
-        break;
-      case "Change":
-        idToNickName[userId] = nickName;
-        break;
-    }
+    if (cmd !== "Change") log.push([userId, cmd]);
+
+    if (nickName) idToNickName[userId] = nickName;
   }
 
-  return answer.map(log => idToNickName[log[0]] + log[1]);
+  return log.map((log) => `${idToNickName[log[0]]}${stageComment[log[1]]}`);
 }
 
 console.log(
