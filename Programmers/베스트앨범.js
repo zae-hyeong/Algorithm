@@ -1,41 +1,25 @@
 function solution(genres, plays) {
-
-  const genreInfoHash = {};
+  const genresObj = {};
+  const playsObj = {};
 
   for (let i = 0; i < genres.length; i++) {
-    const genreInfo = { totalPlays: 0, maxPlaysSongIndex: [] };
+    if (genresObj[genres[i]] === undefined) genresObj[genres[i]] = [];
+    if (playsObj[genres[i]] === undefined) playsObj[genres[i]] = 0;
 
-    if (genreInfoHash[genres[i]] === undefined) {
-      genreInfo.totalPlays = plays[i];
-      genreInfo.maxPlaysSongIndex[0] = i;
-
-      genreInfoHash[genres[i]] = genreInfo;
-    } else {
-      genreInfoHash[genres[i]].totalPlays += plays[i];
-
-      if (plays[genreInfoHash[genres[i]].maxPlaysSongIndex[0]] < plays[i]) {
-        genreInfoHash[genres[i]].maxPlaysSongIndex[1] =
-          genreInfoHash[genres[i]].maxPlaysSongIndex[0];
-        genreInfoHash[genres[i]].maxPlaysSongIndex[0] = i;
-      } else if (plays[genreInfoHash[genres[i]].maxPlaysSongIndex[0]] === plays[i]){
-      genreInfoHash[genres[i]].maxPlaysSongIndex[1] = i;
-      }
-        else if (plays[genreInfoHash[genres[i]].maxPlaysSongIndex[1]] < plays[i]) {
-        genreInfoHash[genres[i]].maxPlaysSongIndex[1] = i;
-      }
-    }
+    genresObj[genres[i]].push([i, plays[i]]);
+    playsObj[genres[i]] += plays[i];
   }
 
-  const genreArray = [];
-  for (const g in genreInfoHash) {
-    genreArray.push({genre: g, ...genreInfoHash[g]});
-  }
-  genreArray.sort((a, b) => b.totalPlays - a.totalPlays);
+  const sortedGenres = Object.keys(playsObj).sort(
+    (a, b) => playsObj[b] - playsObj[a]
+  );
+  
+  const answer = [];
+  for (const gen of sortedGenres) {
+    const sortedSong = genresObj[gen].sort((a, b) => a[1] === b[1] ? a[0] - b[0] : b[1] - a[1]);
 
-  var answer = [];
-  for (const i in genreArray) {
-    answer.push(genreArray[i].maxPlaysSongIndex[0]);
-    answer.push(genreArray[i].maxPlaysSongIndex[1]);
+    answer.push(sortedSong[0][0]);
+    answer.push(sortedSong[1][0]);
   }
 
   return answer;
