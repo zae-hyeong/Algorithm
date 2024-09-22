@@ -37,6 +37,32 @@ function solution(id_list, report, k) {
   return Object.values(numOfRecivedMails);
 }
 
+function solution2(id_list, reports, k) {
+  const reporterList = {};
+  const receivedMails = {};
+
+  for (const id of id_list) {
+    reporterList[id] = new Set();
+    receivedMails[id] = 0;
+  }
+
+  for (const report of reports) {
+    const [reporterId, reportedId] = report.split(" ");
+
+    reporterList[reportedId].add(reporterId);
+  }
+
+  for (const userId of id_list) {
+    if (reporterList[userId].size >= k) {
+      for (const u of reporterList[userId]) {
+        receivedMails[u] = receivedMails[u] + 1;
+      }
+    }
+  }
+
+  return Object.values(receivedMails);;
+}
+
 console.log(solution(
   ["muzi", "frodo", "apeach", "neo"],
   ["muzi frodo", "apeach frodo", "frodo neo", "muzi neo", "apeach muzi"],
