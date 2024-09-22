@@ -1,25 +1,27 @@
 function solution(genres, plays) {
-  const genresObj = {};
-  const playsObj = {};
+  const totalPlays = {};
+  const albums = {};
 
   for (let i = 0; i < genres.length; i++) {
-    if (genresObj[genres[i]] === undefined) genresObj[genres[i]] = [];
-    if (playsObj[genres[i]] === undefined) playsObj[genres[i]] = 0;
+    totalPlays[genres[i]] = totalPlays[genres[i]] + plays[i] || plays[i];
 
-    genresObj[genres[i]].push([i, plays[i]]);
-    playsObj[genres[i]] += plays[i];
+    if (albums[genres[i]] === undefined) albums[genres[i]] = [[i, plays[i]]];
+    else albums[genres[i]].push([i, plays[i]]);
   }
 
-  const sortedGenres = Object.keys(playsObj).sort(
-    (a, b) => playsObj[b] - playsObj[a]
+  const sortedGenre = Object.keys(totalPlays).sort(
+    (a, b) => totalPlays[b] - totalPlays[a]
   );
-  
-  const answer = [];
-  for (const gen of sortedGenres) {
-    const sortedSong = genresObj[gen].sort((a, b) => a[1] === b[1] ? a[0] - b[0] : b[1] - a[1]);
 
-    answer.push(sortedSong[0][0]);
-    answer.push(sortedSong[1][0]);
+  let answer = [];
+
+  for (const genre of sortedGenre) {
+    const sortedAlbum = albums[genre].sort((a, b) =>
+      a[1] === b[1] ? a[0] - b[0] : b[1] - a[1]
+    );
+
+    sortedAlbum[0] && answer.push(sortedAlbum[0][0]);
+    sortedAlbum[1] && answer.push(sortedAlbum[1][0]);
   }
 
   return answer;
@@ -37,4 +39,10 @@ console.log(
     ["classic", "pop", "classic", "classic", "pop"],
     [800, 600, 150, 800, 2500]
   )
+);
+
+console.log(
+  solution(
+    ["classic", "classic", "classic", "pop"], [500, 150, 800, 2500]
+  ) // [3, 2, 0]
 );
