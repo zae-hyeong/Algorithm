@@ -19,12 +19,40 @@ function solution(orders, course) {
     const orderCombination = {};
 
     for (const order of orders) {
-      const orderCombinationPerOrder = combine(order.split("").sort(), c).map((v) =>
-        v.join("")
+      const orderCombinationPerOrder = combine(order.split("").sort(), c).map(
+        (v) => v.join("")
       );
       orderCombinationPerOrder.forEach((v) => {
         orderCombination[v] = orderCombination[v] ? orderCombination[v] + 1 : 1;
       });
+    }
+
+    const sortedOrderCombination = Object.keys(orderCombination)
+      .sort((a, b) => orderCombination[b] - orderCombination[a])
+      .filter(
+        (v, i, arr) =>
+          orderCombination[v] > 1 &&
+          orderCombination[v] === orderCombination[arr[0]]
+      );
+
+    answer = [...answer, ...sortedOrderCombination];
+  }
+
+  return answer.sort();
+}
+
+function solution2(orders, course) {
+  var answer = [];
+
+  for (const c of course) {
+    const orderCombination = {};
+
+    for (const order of orders) {
+      combine(order.split("").sort(), c)
+        .map((v) => v.join(""))
+        .forEach((v) => {
+          orderCombination[v] = (orderCombination[v] || 0) + 1;
+        });
     }
 
     const sortedOrderCombination = Object.keys(orderCombination)
