@@ -6,7 +6,7 @@ class Data {
   }
 }
 
-class Heap {
+class BinarySearchTree {
   constructor() {
     this.root = null;
     this.size = 0;
@@ -39,30 +39,6 @@ class Heap {
     }
   }
 
-  push2(data) {
-    const newNode = new Data(data);
-
-    function move(root, newNode) {
-      if (root === null) return;
-
-      if (newNode.data > root.data) {
-        if (root.right === null) {
-          root.right = newNode;
-          return;
-        }
-        move(root.right);
-      } else if (newNode.data <= root.data){ 
-        if (root.left === null) {
-          root.left = newNode;
-          return;
-        }
-        move(root.left)};
-    }
-
-    move(this.root, newNode);
-    return;
-  }
-
   getMin() {
     let currentNode = this.root;
 
@@ -91,8 +67,7 @@ class Heap {
     return currentNode.data;
   }
 
-  traversal() {
-    // inOrderTraversal
+  inOrderTraversal() {
     const result = [];
     function indore(root) {
       if (root === null) return;
@@ -102,7 +77,7 @@ class Heap {
     }
 
     indore(this.root);
-    console.log(result.join(", "));
+    return result;
   }
 
   preOrderTraversal() {
@@ -115,7 +90,7 @@ class Heap {
     }
 
     indore(this.root);
-    console.log(result.join(", "));
+    return result;
   }
 
   postOrderTraversal() {
@@ -128,22 +103,44 @@ class Heap {
     }
 
     indore(this.root);
-    console.log(result.join(", "));
+    return result;
+  }
+
+  BFS() {
+    const visited = [];
+    const queue = [];
+
+    visited.push(this.root.data);
+    queue.push(this.root);
+
+    while (queue.length > 0) {
+      const node = queue.shift();
+      if (node.left !== null) {
+        queue.push(node.left);
+        visited.push(node.left.data);
+      }
+      if (node.right !== null) {
+        queue.push(node.right);
+        visited.push(node.right.data);
+      }
+    }
+
+    return visited;
   }
 }
 
 function test() {
-  const heap = new Heap();
+  const tree = new BinarySearchTree();
 
-  heap.push2(40);
-  heap.push2(45);
-  heap.push2(30);
-  heap.push2(27);
-  heap.push2(35);
-  heap.push2(32);
-  heap.push2(37);
+  tree.push(40); //       40
+  tree.push(45); //      /  \
+  tree.push(30); //     30   45
+  tree.push(27); //    /  \
+  tree.push(35); //   27  35
+  tree.push(32); //      /  \
+  tree.push(37); //     32   37
 
-  console.log(heap.traversal());
+  console.log(tree.BFS());
 }
 
 test();
