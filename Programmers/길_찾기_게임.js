@@ -1,29 +1,10 @@
 class Node {
-  constructor(data) {
-    this.data = data;
+  constructor([x, y, value]) {
+    this.x = x;
+    this.y = y;
+    this.value = value;
     this.left = null;
     this.right = null;
-  }
-}
-
-class Queue {
-  constructor() {
-    this.q = [];
-    this.head = 0;
-    this.tail = 0;
-  }
-
-  push(data) {
-    this.q.push(data);
-    this.tail++;
-  }
-
-  pop() {
-    this.head++;
-  }
-
-  isNotEmpty() {
-    return this.head !== this.tail;
   }
 }
 
@@ -33,19 +14,15 @@ class Tree {
   }
 
   buildTree(nodeInfo) {
-    const nodes = nodeInfo.sort((a, b) =>
-      b[1] - a[1] === a[1] - b[1] ? a[0] - b[0] : b[1] - a[1]
-    );
+    const nodes = nodeInfo.sort(([, ya], [, yb]) => yb - ya);
 
-    for (let i = 0; i < nodes.length; i++) {
-      this.push(nodes[i]);
-    }
+    nodes.forEach((node) => this.push(node));
 
     return this.root;
   }
 
-  push(data) {
-    const newNode = new Node(data);
+  push([x, y, value]) {
+    const newNode = new Node([x, y, value]);
 
     if (this.root === null) {
       this.root = newNode;
@@ -55,48 +32,35 @@ class Tree {
     let currentNode = this.root;
 
     while (currentNode !== null) {
-      if (currentNode.data[0] > newNode.data[0]) {
-        if (currentNode.left === null) {
-          currentNode.left = newNode;
-          break;
-        }
-        currentNode = currentNode.left;
-      } else {
-        if (currentNode.right === null) {
-          currentNode.right = newNode;
-          break;
-        }
-        currentNode = currentNode.right;
-      }
+      const side = currentNode.x > newNode.x ? "left" : "right";
+
+      if (currentNode[side] === null) {
+        currentNode[side] = newNode;
+        break;
+      } else currentNode = currentNode[side];
     }
   }
 
-  preOrder(nodeHash) {
+  preOrder() {
     const resultArr = [];
 
-    function pre(root) {
-      if (root === null) return;
-      resultArr.push(nodeHash.get(`${root.data}`));
-      pre(root.left);
-      pre(root.right);
-    }
-
-    pre(this.root);
+    (function pre(node) {
+      resultArr.push(node.value);
+      if (node.left !== null) pre(node.left);
+      if (node.right !== null) pre(node.right);
+    })(this.root);
 
     return resultArr;
   }
 
-  postOrder(nodeHash) {
+  postOrder() {
     const resultArr = [];
 
-    function post(root) {
-      if (root === null) return;
-      post(root.left);
-      post(root.right);
-      resultArr.push(nodeHash.get(`${root.data}`));
-    }
-
-    post(this.root);
+    (function post(node) {
+      if (node.left !== null) post(node.left);
+      if (node.right !== null) post(node.right);
+      resultArr.push(node.value);
+    })(this.root);
 
     return resultArr;
   }
@@ -104,15 +68,12 @@ class Tree {
 
 function solution(nodeinfo) {
   const tree = new Tree();
-  const indexHash = new Map();
 
-  for (let i = 0; i < nodeinfo.length; i++) {
-    indexHash.set(`${nodeinfo[i]}`, i+1);
-  }
+  const nodes = nodeinfo.map(([x, y], index) => [x, y, index + 1]);
 
-  tree.buildTree(nodeinfo);
+  tree.buildTree(nodes);
 
-  return [tree.preOrder(indexHash) , tree.postOrder(indexHash)];
+  return [tree.preOrder(), tree.postOrder()];
 }
 
 console.log(
