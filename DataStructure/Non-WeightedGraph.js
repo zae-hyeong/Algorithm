@@ -3,8 +3,6 @@ class Node {
     this.value = value;
     this.weight = weight;
   }
-
-  setNext(node) {}
 }
 
 class Graph {
@@ -37,7 +35,7 @@ class Graph {
     }
   }
 
-  BFSStartBy(nodeValue) {
+  DFSStartBy(nodeValue) {
     const stack = [];
     const visited = new Set();
     const result = [];
@@ -62,7 +60,24 @@ class Graph {
     return result;
   }
 
-  DFSStartBy(nodeValue) {
+  DFSStartBy_recursive(nodeValue) {
+    const _DFS = (nodeValue, visited, result) => {
+      visited.add(nodeValue);
+      result.push(nodeValue);
+
+      (this.map.get(nodeValue) || []).forEach((neighborNode) => {
+        if (!visited.has(neighborNode.value)) _DFS(neighborNode.value, visited, result);
+      });
+    }
+
+    const result = [];
+
+    _DFS(nodeValue, new Set(), result);
+
+    return result;
+  }
+
+  BFSStartBy(nodeValue) {
     const queue = [];
     const visited = new Set();
     const result = [];
@@ -106,5 +121,5 @@ class Graph {
     ["E", "F"],
   ]);
 
-  console.log(g2.DFSStartBy("A"));
+  console.log(g2.DFSStartBy_recursive("A"));
 })();
