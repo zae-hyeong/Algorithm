@@ -3,53 +3,56 @@ class MinHeap {
     this.heap = [null];
   }
 
+  size() {
+    return this.heap.length - 1;
+  }
+
   push(data) {
     this.heap.push(data);
 
-    let index = this.heap.length - 1;
-    let parentIndex = Math.trunc(index / 2);
+    this.bubbleUp();
+  }
 
-    while (this.heap[parentIndex] > data) {
-      this.swap(index, parentIndex);
-      index = parentIndex;
-      parentIndex = Math.trunc(index / 2);
-    }
+  pop() {
+    if (this.size() === 0) return null;
+
+    const min = this.heap[1];
+    this.heap[1] = this.heap[this.size()];
+    this.heap.pop();
+
+    this.bubbleDown();
+
+    return min;
   }
 
   swap(idx1, idx2) {
     [this.heap[idx1], this.heap[idx2]] = [this.heap[idx2], this.heap[idx1]];
   }
 
-  size() {
-    return this.heap.length - 1;
+  bubbleUp() {
+    let currentIdx = this.size();
+
+    while (currentIdx > 0) {
+      const parentIdx = Math.floor(currentIdx / 2);
+      if (this.heap[currentIdx] < this.heap[parentIdx])
+        this.swap(currentIdx, parentIdx);
+      currentIdx = parentIdx;
+    }
   }
 
-  pop() {
-    const returnVal = this.heap[1];
-
-    let lastVal = this.heap.pop();
-    this.heap[1] = lastVal;
-
+  bubbleDown() {
     let currentIdx = 1;
-    let leftIdx = currentIdx * 2;
-    let rightIdx = currentIdx * 2 + 1;
-    let smallerIdx = -1;
 
-    while (
-      (this.heap[leftIdx] && this.heap[currentIdx] > this.heap[leftIdx]) ||
-      (this.heap[rightIdx] && this.heap[currentIdx] > this.heap[rightIdx])
-    ) {
-      smallerIdx =
+    while (currentIdx * 2 < this.size()) {
+      let leftIdx = currentIdx * 2;
+      let rightIdx = currentIdx * 2 + 1;
+
+      const smallerIdx =
         this.heap[leftIdx] < this.heap[rightIdx] ? leftIdx : rightIdx;
 
       this.swap(currentIdx, smallerIdx);
-
       currentIdx = smallerIdx;
-      leftIdx = currentIdx * 2;
-      rightIdx = currentIdx * 2 + 1;
     }
-
-    return returnVal;
   }
 }
 
@@ -65,12 +68,18 @@ const test = () => {
   heap.push(0);
 
   console.log(heap.heap);
-
-  heap.pop();
-
+  console.log('POP::', heap.pop(), '----------------------------------');
   console.log(heap.heap);
-  heap.pop();
+  console.log('POP::', heap.pop(), '----------------------------------');
   console.log(heap.heap);
+  console.log('POP::', heap.pop(), '----------------------------------');
+  console.log(heap.heap);
+  console.log('POP::', heap.pop(), '----------------------------------');
+  console.log(heap.heap);
+  console.log('POP::', heap.pop(), '----------------------------------');
+  console.log('POP::', heap.pop(), '----------------------------------');
+  console.log('POP::', heap.pop(), '----------------------------------');
+  console.log('POP::', heap.pop(), '----------------------------------');
 };
 
 test();
