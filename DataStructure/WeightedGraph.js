@@ -1,3 +1,61 @@
+class MinHeap {
+  constructor() {
+    this.heap = [null];
+  }
+
+  size() {
+    return this.heap.length - 1;
+  }
+
+  push(data) {
+    this.heap.push(data);
+
+    this.bubbleUp();
+  }
+
+  pop() {
+    if (this.size() === 0) return null;
+
+    const min = this.heap[1];
+    this.heap[1] = this.heap[this.size()];
+    this.heap.pop();
+
+    this.bubbleDown();
+
+    return min;
+  }
+
+  swap(idx1, idx2) {
+    [this.heap[idx1], this.heap[idx2]] = [this.heap[idx2], this.heap[idx1]];
+  }
+
+  bubbleUp() {
+    let currentIdx = this.size();
+
+    while (currentIdx > 0) {
+      const parentIdx = Math.floor(currentIdx / 2);
+      if (this.heap[currentIdx] < this.heap[parentIdx])
+        this.swap(currentIdx, parentIdx);
+      currentIdx = parentIdx;
+    }
+  }
+
+  bubbleDown() {
+    let currentIdx = 1;
+
+    while (currentIdx * 2 < this.size()) {
+      let leftIdx = currentIdx * 2;
+      let rightIdx = currentIdx * 2 + 1;
+
+      const smallerIdx =
+        this.heap[leftIdx] < this.heap[rightIdx] ? leftIdx : rightIdx;
+
+      this.swap(currentIdx, smallerIdx);
+      currentIdx = smallerIdx;
+    }
+  }
+}
+
 class Graph {
   constructor() {
     this.map = new Map();
@@ -48,6 +106,43 @@ class Graph {
 
     return table;
   }
+
+  dijkstraStartFrom2(startNode) {
+    const distances = {}; // 노드별 거리
+    const paths = { [startNode]: [startNode] }; // 노드별 경로
+    for (const node in this.map.keys()) {
+      distances[node] = Infinity;
+    }
+    distances[startNode] = 0;
+
+    const minHeap = new MinHeap();
+    minHeap.push([this.map.get(startNode), startNode]);
+
+    while (minHeap.size() > 0) {
+      const [currentDistance, currentNode] = minHeap.pop();
+
+      if (distances[currentNode] < currentDistance)
+        continue;
+
+      for (const adjacentNode in this.map.get(currentNode).keys()) {
+        const weight = this.map.get(currentNode).get(adjacentNode);
+        const distance = currentDistance + weight;
+
+        if (distance < distance[currentNode]) {
+          distance[currentNode] = distance;
+          paths[adjacentNode] = [...paths[currentNode], adjacentNode];
+
+          minHeap.push([distance, adjacentNode]);
+        }
+      }
+    }
+
+    return [distances, paths]
+  }
+
+  BellmanFordStartFrom(startNode) {
+
+  }
 }
 
 (() => {
@@ -59,13 +154,13 @@ class Graph {
     ["C", "B", 1],
   ]);
 
-  console.log(g1.map);
-  console.log(g1.dijkstraStartFrom("A"));
+  // console.log(g1.map);
+  console.log(g1.dijkstraStartFrom2("A"));
 
   const g2 = new Graph();
   g2.buildGraph_directed([["A", "B", 1], ["B", "C", 5], ["C", "D", 1], ["D"]]);
 
-  console.log(g2.map);
+  // console.log(g2.map);
 
-  console.log(g2.dijkstraStartFrom("A"));
+  console.log(g2.dijkstraStartFrom2("A"));
 })();
