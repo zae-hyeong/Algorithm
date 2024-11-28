@@ -110,28 +110,31 @@ class Graph {
   dijkstraStartFrom2(startNode) {
     const distances = {}; // 노드별 거리
     const paths = { [startNode]: [startNode] }; // 노드별 경로
-    for (const node in this.map.keys()) {
+    for (const node of this.map.keys()) {
       distances[node] = Infinity;
     }
     distances[startNode] = 0;
 
+    // 최소 힙을 사용해서, 방문 예정인 노드 중에서 가장 작은 값을 가진 노드를 가져옴
     const minHeap = new MinHeap();
-    minHeap.push([this.map.get(startNode), startNode]);
+    minHeap.push([distances[startNode], startNode]);
 
     while (minHeap.size() > 0) {
       const [currentDistance, currentNode] = minHeap.pop();
 
+      // 현재 노드의 거리 값이 큐에서 가져온 거리 값보다 크면, 해당 노드는 이미 처리한 것이므로 무시
       if (distances[currentNode] < currentDistance)
         continue;
 
-      for (const adjacentNode in this.map.get(currentNode).keys()) {
+      for (const adjacentNode of this.map.get(currentNode).keys()) {
         const weight = this.map.get(currentNode).get(adjacentNode);
         const distance = currentDistance + weight;
 
-        if (distance < distance[currentNode]) {
-          distance[currentNode] = distance;
+        if (distance < distances[adjacentNode]) {
+          distances[adjacentNode] = distance;
           paths[adjacentNode] = [...paths[currentNode], adjacentNode];
 
+          // 최소 경로가 갱신된 노드를 비용과 함께 최소 힙에 push
           minHeap.push([distance, adjacentNode]);
         }
       }
@@ -140,9 +143,6 @@ class Graph {
     return [distances, paths]
   }
 
-  BellmanFordStartFrom(startNode) {
-
-  }
 }
 
 (() => {
