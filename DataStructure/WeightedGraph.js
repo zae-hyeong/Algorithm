@@ -59,6 +59,7 @@ class MinHeap {
 class Graph {
   constructor() {
     this.map = new Map();
+    this.numOfEdge = 0;
   }
 
   /** 방향성 있는 그래프 */
@@ -67,7 +68,10 @@ class Graph {
       if (!this.map.has(nodeA)) {
         this.map.set(nodeA, new Map());
       }
-      nodeB && this.map.get(nodeA).set(nodeB, weight);
+      if (nodeB) {
+        this.map.get(nodeA).set(nodeB, weight);
+        this.numOfEdge++;
+      }
     }
   }
 
@@ -123,8 +127,7 @@ class Graph {
       const [currentDistance, currentNode] = minHeap.pop();
 
       // 현재 노드의 거리 값이 큐에서 가져온 거리 값보다 크면, 해당 노드는 이미 처리한 것이므로 무시
-      if (distances[currentNode] < currentDistance)
-        continue;
+      if (distances[currentNode] < currentDistance) continue;
 
       for (const adjacentNode of this.map.get(currentNode).keys()) {
         const weight = this.map.get(currentNode).get(adjacentNode);
@@ -140,12 +143,50 @@ class Graph {
       }
     }
 
-    return [distances, paths]
+    return [distances, paths];
   }
 
+  bellmanFordStartFrom(startNode) {
+    const distances = new Map();
+    const prevNode = new Map();
+
+    for (const node of this.map.keys()) {
+      distances.set(node, Infinity);
+      prevNode.set(node, null);
+    }
+    distances.set(startNode, 0);
+    prevNode.set(startNode, startNode);
+
+    // 최대 엣지 개수(node 개수 - 1)만큼 반복함
+    for (let i = 0; i < this.map.size - 1; i++) {
+      this.map.forEach((edgesOfCurrentNode, currentNode) => {
+        for (const [neighborNode, weight] of edgesOfCurrentNode.entries()) {
+          if (
+            distances.get(neighborNode) >
+            distances.get(currentNode) + weight
+          ) {
+            distances.set(neighborNode, distances.get(currentNode) + weight);
+            prevNode.set(neighborNode, currentNode);
+          }
+        }
+      });
+    }
+
+    // 한번 더 반복해서 음의 순환 찾기
+    this.map.forEach((edgesOfCurrentNode, currentNode) => {
+      for (const [neighborNode, weight] of edgesOfCurrentNode.entries()) {
+        if (distances.get(neighborNode) > distances.get(currentNode) + weight) {
+          return [-1];
+        }
+      }
+    });
+
+    return [distances, prevNode];
+  }
 }
 
 (() => {
+  //양의 가중치만 갖는 그래프
   const g1 = new Graph();
   g1.buildGraph_directed([
     ["A", "B", 9],
@@ -154,13 +195,33 @@ class Graph {
     ["C", "B", 1],
   ]);
 
-  // console.log(g1.map);
   console.log(g1.dijkstraStartFrom2("A"));
 
+  //음의 가중치를 갖는 그래프
   const g2 = new Graph();
-  g2.buildGraph_directed([["A", "B", 1], ["B", "C", 5], ["C", "D", 1], ["D"]]);
+  g2.buildGraph_directed([
+    ["A", "B", 4],
+    ["A", "C", 3],
+    ["A", "E", -6],
+    ["B", "D", 5],
+    ["C", "B", 2],
+    ["D", "A", 7],
+    ["D", "C", 4],
+    ["E", "C", 2],
+  ]);
 
-  // console.log(g2.map);
+  console.log(g2.bellmanFordStartFrom("A"));
 
-  console.log(g2.dijkstraStartFrom2("A"));
+  //음의 순환을 갖는 그래프
+  const g3 = new Graph();
+  g3.buildGraph_directed([
+    ["A", "B", 5],
+    ["A", "C", -1],
+    ["B", "C", 2],
+    ["C", "D", -2],
+    ["D", "A", 2],
+    ["D", "B", 6],
+  ]);
+
+  console.log(g3.bellmanFordStartFrom("A"));
 })();
