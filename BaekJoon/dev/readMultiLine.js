@@ -12,8 +12,10 @@ readline
     process.exit();
   });
 
+/**
+ * @param {Array<string>} inputLines
+ */
 function solution(inputLines) {
-  const [numOfInput, ...input] = [...inputLines];
+  const [...inputs] = inputLines;
 
-  
 }

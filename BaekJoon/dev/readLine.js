@@ -7,6 +7,9 @@ readline.on("line", function (line) {
   process.exit();
 });
 
+/**
+ * @param {string} input
+ */
 function solution(input) {
-
+  
 }
