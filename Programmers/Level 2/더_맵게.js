@@ -86,19 +86,14 @@ function solution(scovilles, K) {
 
   scovilles.forEach((v) => minHeap.push(v));
 
-  let minScoville = minHeap.getMin();
   let count = 0;
 
-  while (minHeap.size() > 1 && minScoville < K) {
+  while (minHeap.size() > 1 && minHeap.getMin() < K) {
     minHeap.push(minHeap.pop() + minHeap.pop() * 2);
-
-    minScoville = minHeap.getMin();
     count++;
   }
 
-  if (minHeap.size() <= 1 && minScoville < K) return -1;
-
-  return count;
+  return minHeap.getMin() < K ? -1 : count;
 }
 
 console.log(solution([1, 2, 3, 9, 10, 12], 7));
