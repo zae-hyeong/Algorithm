@@ -48,8 +48,6 @@ function solution(priorities, location) {
   const maxHeap = new MaxHeap(priorities);
   const queue = new Queue();
 
-  const executionOrder = Array.from({length: priorities.length}, () => -1);
-
   priorities.forEach((v, i) => {
     queue.push(i);
   });
@@ -61,15 +59,13 @@ function solution(priorities, location) {
     const priority = priorities[priorityIndex];
 
     if(priority === maxPriotiry) {
-      executionOrder[priorityIndex] = priorities.length - queue.size();
-
+      if(priorityIndex === location) return priorities.length - queue.size();
+      
       maxPriotiry = maxHeap.popMax();
     } else {
       queue.push(priorityIndex);
     }
   }
-
-  return executionOrder[location];
 }
 
 console.log(solution([2, 1, 3, 2], 2));
