@@ -1,10 +1,14 @@
 class MinHeap {
   constructor() {
-    this.heap = [null];
+    this.heap = [];
   }
 
   size() {
-    return this.heap.length - 1;
+    return this.heap.length;
+  }
+
+  getMin() {
+    return this.heap[1];
   }
 
   push(data) {
@@ -14,15 +18,16 @@ class MinHeap {
   }
 
   pop() {
-    if (this.size() === 0) return null;
+    if (this.size() <= 0) return null;
 
-    const min = this.heap[1];
-    this.heap[1] = this.heap[this.size()];
+    const returnVal = this.heap[0];
+
+    this.swap(0, this.heap.length - 1);
     this.heap.pop();
 
     this.bubbleDown();
 
-    return min;
+    return returnVal;
   }
 
   swap(idx1, idx2) {
@@ -30,56 +35,77 @@ class MinHeap {
   }
 
   bubbleUp() {
-    let currentIdx = this.size();
+    let i = this.heap.length - 1;
 
-    while (currentIdx > 0) {
-      const parentIdx = Math.floor(currentIdx / 2);
-      if (this.heap[currentIdx] < this.heap[parentIdx])
-        this.swap(currentIdx, parentIdx);
-      currentIdx = parentIdx;
+    while (i >= 0 && this.heap[i] < this.heap[this.parentIdx(i)]) {
+      this.swap(i, this.parentIdx(i));
+
+      i = this.parentIdx(i);
     }
   }
 
   bubbleDown() {
-    let currentIdx = 1;
+    let i = 0;
 
-    while (currentIdx * 2 < this.size()) {
-      let leftIdx = currentIdx * 2;
-      let rightIdx = currentIdx * 2 + 1;
+    while (
+      this.heap[this.leftChildIdx(i)] < this.heap[i] ||
+      this.heap[this.rightChildIdx(i)] < this.heap[i]
+    ) {
+      let leftIdx = this.leftChildIdx(i);
+      let rightIdx = this.rightChildIdx(i);
 
-      const smallerIdx =
-        this.heap[leftIdx] < this.heap[rightIdx] ? leftIdx : rightIdx;
+      let smallerKeyIdx = -1;
 
-      this.swap(currentIdx, smallerIdx);
-      currentIdx = smallerIdx;
+      if (this.heap[rightIdx] !== undefined) {
+        smallerKeyIdx = this.heap[leftIdx] < this.heap[rightIdx] ? leftIdx : rightIdx;
+      } else {
+        smallerKeyIdx = leftIdx;
+      }
+
+      this.swap(i, smallerKeyIdx);
+      i = smallerKeyIdx;
     }
+  }
+
+  parentIdx(i) {
+    return Math.floor((i - 1) / 2);
+  }
+
+  leftChildIdx(i) {
+    return 2 * i + 1;
+  }
+
+  rightChildIdx(i) {
+    return 2 * i + 2;
   }
 }
 
 const test = () => {
   const heap = new MinHeap();
 
-  heap.push(3);
+  heap.push(-3);
   heap.push(5);
   heap.push(4);
   heap.push(2);
-  heap.push(1);
+  heap.push(-1);
   heap.push(7);
   heap.push(0);
 
   console.log(heap.heap);
-  console.log('POP::', heap.pop(), '----------------------------------');
+  console.log("POP::", heap.pop(), "----------------------------------");
   console.log(heap.heap);
-  console.log('POP::', heap.pop(), '----------------------------------');
+  console.log("POP::", heap.pop(), "----------------------------------");
   console.log(heap.heap);
-  console.log('POP::', heap.pop(), '----------------------------------');
+  console.log("POP::", heap.pop(), "----------------------------------");
   console.log(heap.heap);
-  console.log('POP::', heap.pop(), '----------------------------------');
+  console.log("POP::", heap.pop(), "----------------------------------");
   console.log(heap.heap);
-  console.log('POP::', heap.pop(), '----------------------------------');
-  console.log('POP::', heap.pop(), '----------------------------------');
-  console.log('POP::', heap.pop(), '----------------------------------');
-  console.log('POP::', heap.pop(), '----------------------------------');
+  console.log("POP::", heap.pop(), "----------------------------------");
+  console.log(heap.heap);
+  console.log("POP::", heap.pop(), "----------------------------------");
+  console.log(heap.heap);
+  console.log("POP::", heap.pop(), "----------------------------------");
+  console.log("POP::", heap.pop(), "----------------------------------");
 };
 
 test();
