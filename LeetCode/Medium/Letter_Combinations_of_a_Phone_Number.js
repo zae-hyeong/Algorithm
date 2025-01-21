@@ -2,34 +2,37 @@
  * @param {string} digits
  * @return {string[]}
  */
+
+const phoneLetterHash = {
+  2: "abc",
+  3: "def",
+  4: "ghi",
+  5: "jkl",
+  6: "mno",
+  7: "pqrs",
+  8: "tuv",
+  9: "wxyz",
+};
+
 var letterCombinations = function (digits) {
-  const phoneLetterHash = {
-    2: "abc",
-    3: "def",
-    4: "ghi",
-    5: "jkl",
-    6: "mno",
-    7: "pqrs",
-    8: "tuv",
-    9: "wxyz",
-  };
+  if (!digits.length) return []; // 빈 문자열 처리
+  
+  const result = [];
 
-  function _helper(remainDigits) {
-    if (remainDigits.length === 0) return [];
-    if (remainDigits.length === 1)
-      return phoneLetterHash[remainDigits].split("");
-    const result = [];
+  (function _helper(idx, comb) {
+    if (idx === digits.length) {
+      result.push(comb);
+      return;
+    }
 
-    phoneLetterHash[remainDigits[0]].split("").forEach((fixed) => {
-      const returnVal = _helper(remainDigits.slice(1));
-      result.push(...returnVal.map((v) => fixed + v));
-    });
-    return result;
-  }
+    for (const v of Array.from(phoneLetterHash[digits[idx]])) {
+      _helper(idx + 1, comb + v);
+    }
+  })(0, "");
 
-  return  _helper(digits);
+  return result;
 };
 
 console.log(letterCombinations("23"));
-console.log(letterCombinations(''));
-console.log(letterCombinations('2'));
+console.log(letterCombinations(""));
+console.log(letterCombinations("2"));
