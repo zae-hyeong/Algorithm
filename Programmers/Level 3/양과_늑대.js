@@ -83,7 +83,7 @@ function solution2(info, edges) {
   const queue = new Queue();
   queue.push([0, 1, 0, new Set()]); // 현재 인덱스, 양의 수, 늑대의 수, 방문한 노드 집합
 
-  while (queue.isNotEmpty()) {
+  while (!queue.isEmpty()) {
     const [currentNode, numOfSheep, numOfWolf, visited] = queue.pop();
 
     maxSheep = Math.max(maxSheep, numOfSheep);
