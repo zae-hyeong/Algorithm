@@ -1,27 +1,21 @@
 function solution(numbers) {
-  const stack = [];
   const result = new Array(numbers.length).fill(-1);
-
-  stack.push({
-    num: numbers[0],
-    index: 0,
-  });
+  
+  const stack = [];
+  stack.push(0);
 
   const getTopNum = () =>
     stack[stack.length - 1] === undefined
       ? Infinity
-      : stack[stack.length - 1].num;
+      : numbers[stack[stack.length - 1]];
 
   for (let i = 1; i < numbers.length; i++) {
     while (numbers[i] > getTopNum()) {
-      const { num, index } = stack.pop();
+      const index = stack.pop();
       result[index] = numbers[i];
     }
 
-    stack.push({
-      num: numbers[i],
-      index: i,
-    });
+    stack.push(i);
   }
 
   return result;
