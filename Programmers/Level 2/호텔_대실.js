@@ -8,15 +8,13 @@ class MinHeap {
     this.arr.sort((a, b) => b[1] - a[1]);
   }
 
-  get() {
-    return this.arr[this.arr.length - 1];
-  }
+  pop = () => this.arr.pop();
 
-  pop() {
-    return this.arr.pop();
-  }
+  get = () => this.arr[this.arr.length - 1];
 
   isEmpty = () => this.arr.length === 0;
+
+  size = () => this.arr.length;
 }
 
 const parseIntTime = (strTime) => {
@@ -41,7 +39,6 @@ function solution(book_times) {
   for (const [startTime, endTime] of book_times) {
     if (minHeap.isEmpty()) {
       minHeap.push([rooms.length, endTime]);
-      rooms[rooms.length] = endTime;
       continue;
     }
 
@@ -49,24 +46,23 @@ function solution(book_times) {
 
     if (startTime < minEndTime) {
       minHeap.push([rooms.length, endTime]);
-      rooms[rooms.length] = endTime;
       continue;
+    } else {
+      minHeap.pop();
+      minHeap.push([roomIdx, endTime]);
     }
-
-    rooms[roomIdx] = endTime;
-    minHeap.pop();
   }
 
-  return rooms.length;
+  return minHeap.size();
 }
-
 console.log(
   solution([
-    ["9:00", "10:00"],    ["10:00", "11:20"],       ["14:10", "19:20"],
+    ["9:00", "10:00"],
+    ["10:00", "11:20"],
+    ["14:10", "19:20"],
 
-    ["14:20", "15:20"],     ["22:30", "23:20"],
-
-
+    ["14:20", "15:20"],
+    ["22:30", "23:20"],
   ])
 );
 // console.log(
