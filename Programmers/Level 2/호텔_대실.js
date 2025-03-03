@@ -5,7 +5,7 @@ class MinHeap {
 
   push(data) {
     this.arr.push(data);
-    this.arr.sort((a, b) => b[1] - a[1]);
+    this.arr.sort((a, b) => b - a);
   }
 
   pop = () => this.arr.pop();
@@ -22,6 +22,7 @@ const parseIntTime = (strTime) => {
   return hour * 100 + min;
 };
 
+// 시간 형식에 맞게 10분 더해주는 함수
 const plus10Min = (time) => ((time + 10) % 100 >= 60 ? time + 50 : time + 10);
 
 function solution(book_times) {
@@ -34,37 +35,34 @@ function solution(book_times) {
 
   const minHeap = new MinHeap();
 
-  const rooms = [];
-
   for (const [startTime, endTime] of book_times) {
     if (minHeap.isEmpty()) {
-      minHeap.push([rooms.length, endTime]);
+      minHeap.push(endTime);
       continue;
     }
 
-    const [roomIdx, minEndTime] = minHeap.get();
+    const minEndTime = minHeap.get();
 
-    if (startTime < minEndTime) {
-      minHeap.push([rooms.length, endTime]);
-      continue;
-    } else {
-      minHeap.pop();
-      minHeap.push([roomIdx, endTime]);
-    }
+    if (startTime >= minEndTime) minHeap.pop();
+
+    minHeap.push(endTime);
   }
 
   return minHeap.size();
 }
+
 console.log(
   solution([
-    ["9:00", "10:00"],
-    ["10:00", "11:20"],
     ["14:10", "19:20"],
 
     ["14:20", "15:20"],
-    ["22:30", "23:20"],
+    ["16:40", "18:20"],
+
+    ["15:00", "17:00"],
+    ["18:20", "21:20"],
   ])
 );
+
 // console.log(
 //   solution([
 //     ["09:10", "10:10"],
