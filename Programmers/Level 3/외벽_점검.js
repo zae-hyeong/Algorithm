@@ -1,36 +1,51 @@
-function solution(n, weak, dist) {
-  let answer = Infinity;
-  const numOfDist = dist.length;
-  dist = dist.sort((a, b) => a - b);
+function makePermutation(dist) {
+  const permutation = [];
 
-  (function _helper(weak, dist) {
-    if (weak.length === 0) {
-      answer = Math.min(answer, numOfDist - dist.length);
+  (function _helper(dist, perm) {
+    if (dist.length === 0) {
+      permutation.push(perm);
       return;
     }
-    if (dist.length === 0) return;
 
-    const distances = [...dist];
-    const biggestDistance = distances.pop();
-
-    let remainWeak = [];
-
-    weak.forEach((w, i, arr) => {
-      remainWeak = [...arr];
-      remainWeak = remainWeak.filter((v) => {
-        if (w + biggestDistance >= n) {
-          return !(v >= w || v <= w + biggestDistance - n);
-        } else {
-          return !(v >= w && v <= w + biggestDistance);
-        }
-      });
-
-      _helper(remainWeak, distances);
+    dist.forEach((fixed, i, arr) => {
+      const copyDist = [...arr];
+      copyDist.splice(i, 1);
+      _helper(copyDist, [...perm, fixed]);
     });
+  })(dist, []);
 
-  })(weak, dist);
+  return permutation;
+}
 
-  return answer === Infinity ? -1 : answer;
+function isInRange(n, startPoint, width, weakPoint) {
+  if (weakPoint >= startPoint && weakPoint <= startPoint + width) return true;
+  if (weakPoint + n >= startPoint && weakPoint + n <= startPoint + width)
+    return true;
+
+  return false;
+}
+
+function solution(n, weak, dists) {
+  const answer = [];
+
+  for (const perm of makePermutation(dists)) {
+    (function _helper(dist, weak) {
+      if (weak.length === 0) {
+        answer.push(dists.length - dist.length);
+        return;
+      }
+      if (dist.length === 0) return;
+
+      const copyDist = [...dist];
+      const width = copyDist.pop();
+
+      weak.forEach(weakPoint => {
+        _helper(copyDist, [...weak].filter(w => !isInRange(n, weakPoint, width, w)));
+      })
+    })(perm, weak);
+  }
+
+  return answer.length === 0 ? -1 : Math.min(...answer);
 }
 
 console.log(solution(12, [1, 5, 6, 10], [1, 2, 3, 4]));
