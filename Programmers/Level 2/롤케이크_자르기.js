@@ -1,22 +1,22 @@
 function solution(topping) {
-    const brother = {};
-    const me = {};
+    const brother = new Map();
+    const me = new Map();
 
     topping.forEach(v => {
-        if(brother[v] === undefined) brother[v] = 0;
-        brother[v]++;
+        if(!brother.has(v)) brother.set(v, 0);
+        brother.set(v, brother.get(v) + 1);
     });
 
     let answer = 0;
 
     for (let i = 0; i < topping.length; i++) { 
-        brother[topping[i]] -= 1;
-        if(brother[topping[i]] === 0) delete brother[topping[i]];
+        brother.set(topping[i], brother.get(topping[i]) - 1);
+        if(brother.get(topping[i]) === 0) delete brother.delete(topping[i]);
 
-        if(me[topping[i]] === undefined) me[topping[i]] = 0;
-        me[topping[i]] += 1;
+        if(!me.has(topping[i])) me.set(topping[i], 0);
+        me.set(topping[i], me.get(topping[i]) + 1);
         
-        if (Object.keys(brother).length === Object.keys(me).length) answer++;
+        if (brother.size === me.size) answer++;
     }
 
     return answer;
