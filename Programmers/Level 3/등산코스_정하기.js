@@ -86,58 +86,39 @@ function solution(n, paths, gates, summits) {
     const intensities = Array.from({ length: n + 1 }, () => Infinity);
     const minHeap = new MinHeap();
 
+    const queue = [];
+
+    
     for (const gate of gates) {
-        intensities[gate] = 0;
-        minHeap.push([gate, 0]);
-    }
+        const queue = [];
 
-    const graph = makeGraph(paths);
+        queue.push([gate, [], new Set([gate])]); // [point, pathWeights, visited]
 
-    const isSummit = new Set(summits);
+        while (queue.length > 0) {
+            const [point, pathWeights, visited] = queue.shift();
 
-    while (minHeap.size() > 0) {
-        const [curNode, curIntensity] = minHeap.pop();
-
-        if (isSummit.has(curNode) || curIntensity > intensities[curNode])
-            continue;
-
-        graph.get(curNode).forEach(({ next: nextNode, weight }) => {
-            const newIntensity = Math.max(curIntensity, weight);
-
-            if (newIntensity < intensities[nextNode]) {
-                intensities[nextNode] = newIntensity;
-                minHeap.push([nextNode, newIntensity]);
+            if (summitsSet.has(point)) {
+                answer.push([point, Math.max(...pathWeights)]);
+                continue;
             }
-        });
+
+            for (const { next: connectedPoint, weight } of graph.get(point)) {
+                if (!visited.has(connectedPoint)) {
+                    queue.push([
+                        connectedPoint,
+                        [...pathWeights, weight],
+                        new Set([...visited.values(), connectedPoint]),
+                    ]);
+                }
+            }
+        }
     }
 
-    let answer = [0, Infinity];
-    summits.sort((a, b) => a - b);
-    for (const summit of summits) {
-        if (intensities[summit] < answer[1])
-            answer = [summit, intensities[summit]];
-    }
-
-    return answer;
+    return answer.sort(
+        ([summit1, intensity1], [summit2, intensity2]) =>
+            intensity1 - intensity2 || summit1 - summit2
+    )[0];
 }
-
-console.log(
-    solution(
-        6,
-        [
-            [1, 2, 3],
-            [2, 3, 5],
-            [2, 4, 2],
-            [2, 5, 4],
-            [3, 4, 4],
-            [4, 5, 3],
-            [4, 6, 1],
-            [5, 6, 1],
-        ],
-        [1, 3],
-        [5]
-    )
-); //[5, 3]
 
 // console.log(
 //     solution(
@@ -149,9 +130,26 @@ console.log(
 //             [2, 6, 7],
 //             [4, 5, 1],
 //             [5, 6, 1],
-//             [6, 7, 1],
 //         ],
-//         [3, 7],
-//         [1, 5]
+//         [1, 3],
+//         [5]
 //     )
-// ); // [3, 4]
+// ); // [5, 3]
+// console.log(solution(7, [[1, 4, 4], [1, 6, 1], [1, 7, 3], [2, 5, 2], [3, 7, 4], [5, 6, 6]], [1], [2, 3, 4])); // [3,4]
+console.log(
+    solution(
+        7,
+        [
+            [1, 2, 5],
+            [1, 4, 1],
+            [2, 3, 1],
+            [2, 6, 7],
+            [4, 5, 1],
+            [5, 6, 1],
+            [6, 7, 1],
+        ],
+        [3, 7],
+        [1, 5]
+    )
+); //[5,1]
+// console.log(solution(5, [[1, 3, 10], [1, 4, 20], [2, 3, 4], [2, 4, 6], [3, 5, 20], [4, 5, 6]], [1,2], [5])); // [5, 6]
