@@ -83,46 +83,42 @@ const makeGraph = (paths) => {
 };
 
 function solution(n, paths, gates, summits) {
-    const dijkstraTable = new Map();
-    for (let i = 1; i <= n; i++) {
-        dijkstraTable.set(i, Infinity);
-    }
-
+    const intensities = Array.from({ length: n + 1 }, () => Infinity);
     const minHeap = new MinHeap();
 
     for (const gate of gates) {
-        dijkstraTable.set(gate, 0);
+        intensities[gate] = 0;
         minHeap.push([gate, 0]);
     }
 
-    const isSummit = new Set();
-    summits.forEach((s) => isSummit.add(s));
-
     const graph = makeGraph(paths);
 
-    let result = [Infinity, Infinity]; // summit, minIntensity
+    const isSummit = new Set(summits);
 
     while (minHeap.size() > 0) {
-        const [node, intensity] = minHeap.pop();
+        const [curNode, curIntensity] = minHeap.pop();
 
-        if (isSummit.has(node)) {
-            if (intensity === result[1])
-                result = node > result[0] ? result : [node, intensity];
-            result = intensity > result[1] ? result : [node, intensity];
+        if (isSummit.has(curNode) || curIntensity > intensities[curNode])
             continue;
-        }
 
-        graph.get(node).forEach(({ next: nearNode, weight }) => {
-            let currVal = dijkstraTable.get(nearNode);
+        graph.get(curNode).forEach(({ next: nextNode, weight }) => {
+            const newIntensity = Math.max(curIntensity, weight);
 
-            if (currVal > Math.max(intensity, weight)) {
-                dijkstraTable.set(nearNode, Math.max(intensity, weight));
-                minHeap.push([nearNode, dijkstraTable.get(nearNode)]);
+            if (newIntensity < intensities[nextNode]) {
+                intensities[nextNode] = newIntensity;
+                minHeap.push([nextNode, newIntensity]);
             }
         });
     }
 
-    return result;
+    let answer = [0, Infinity];
+    summits.sort((a, b) => a - b);
+    for (const summit of summits) {
+        if (intensities[summit] < answer[1])
+            answer = [summit, intensities[summit]];
+    }
+
+    return answer;
 }
 
 console.log(
