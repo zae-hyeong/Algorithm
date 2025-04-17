@@ -28,7 +28,7 @@ const makeArray = (str) => {
     return arr;
 };
 
-function solution(input) {
+function solution1(input) {
     const arr = makeArray(input);
 
     let result = 0;
@@ -60,4 +60,20 @@ function solution(input) {
 
     console.log(result);
 }
-// solution("10+20+30+40");
+
+function solution(input) {
+    const inputArr = input.split('-');
+
+    console.log(inputArr);
+    
+    let result = inputArr.shift().split('+').map(v => +v).reduce((a, c) => a + c, 0);
+    console.log(inputArr);
+
+    inputArr.forEach(v => {
+        result -= v.split('+').map(v => +v).reduce((a, c) => a + c, 0);
+    })
+
+    console.log(result);
+}
+
+solution("10+10+10-20-20+30+50");
