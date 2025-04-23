@@ -1,25 +1,31 @@
 function solution(diffs, times, limit) {
-    let level = -1;
+    let min = 1;
+    let max = -1;
+
     for(const diff of diffs) {
-        if (level < diff) level = diff;
+        if (max < diff) max = diff;
     }
 
-    while (level >= 0) {
+    while (min <= max) {
+        const centerLevel = Math.floor((min + max) / 2);
+        
+        // console.log('min, max, center', min, max, centerLevel);
+        
         let totalTime = 0;
-
         for (let [i, diff] of diffs.entries()) {
-            if (diff <= level) totalTime += times[i];
-            else if (i === 0) totalTime += times[i] * (diff - level);
+            if (diff <= centerLevel) totalTime += times[i];
+            else if (i === 0) totalTime += (times[i] * (diff - centerLevel));
             else
                 totalTime +=
-                    (times[i] + times[i - 1]) * (diff - level) + times[i];
+                    ((times[i] + times[i - 1]) * (diff - centerLevel) + times[i]);
         }
+        // console.log('totalTime', totalTime);
 
-        if (totalTime > limit) return level + 1;
-        level--;
+        if (totalTime > limit) min = centerLevel + 1;
+        else max = centerLevel - 1;
     }
 
-    return level + 1;
+    return min;
 }
 
 console.log(solution([0, 0, 0], [2, 4, 7], 30));
