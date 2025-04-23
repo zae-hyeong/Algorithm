@@ -1,51 +1,49 @@
 function makePermutation(dist) {
-  const permutation = [];
+    const permutation = [];
 
-  (function _helper(dist, perm) {
-    if (dist.length === 0) {
-      permutation.push(perm);
-      return;
-    }
+    (function _helper(dist, perm) {
+        if (dist.length === 0) {
+            permutation.push(perm);
+            return;
+        }
 
-    dist.forEach((fixed, i, arr) => {
-      const copyDist = [...arr];
-      copyDist.splice(i, 1);
-      _helper(copyDist, [...perm, fixed]);
-    });
-  })(dist, []);
+        dist.forEach((fixed, i, arr) => {
+            const copyDist = [...arr];
+            copyDist.splice(i, 1);
+            _helper(copyDist, [...perm, fixed]);
+        });
+    })(dist, []);
 
-  return permutation;
-}
-
-function isInRange(n, startPoint, width, weakPoint) {
-  if (weakPoint >= startPoint && weakPoint <= startPoint + width) return true;
-  if (weakPoint + n >= startPoint && weakPoint + n <= startPoint + width)
-    return true;
-
-  return false;
+    return permutation;
 }
 
 function solution(n, weak, dists) {
-  const answer = [];
+    const length = weak.length;
 
-  for (const perm of makePermutation(dists)) {
-    (function _helper(dist, weak) {
-      if (weak.length === 0) {
-        answer.push(dists.length - dist.length);
-        return;
-      }
-      if (dist.length === 0) return;
+    for (let i = 0; i < length; i++) weak.push(weak[i] + n);
 
-      const copyDist = [...dist];
-      const width = copyDist.pop();
+    let answer = dists.length + 1;
 
-      weak.forEach(weakPoint => {
-        _helper(copyDist, [...weak].filter(w => !isInRange(n, weakPoint, width, w)));
-      })
-    })(perm, weak);
-  }
+    for (let i = 0; i < length; i++) {
+        for (const friends of makePermutation(dists)) {
+            let cnt = 1;
 
-  return answer.length === 0 ? -1 : Math.min(...answer);
+            let position = weak[i] + friends[cnt - 1];
+
+            for (let j = i; j < i + length; j++) {
+                if (position < weak[j]) {
+                    cnt += 1;
+
+                    if (cnt > dists.length) break;
+
+                    position = weak[j] + friends[cnt - 1];
+                }
+            }
+            answer = Math.min(answer, cnt);
+        }
+    }
+
+    return answer <= dists.length ? answer : -1;
 }
 
 console.log(solution(12, [1, 5, 6, 10], [1, 2, 3, 4]));
