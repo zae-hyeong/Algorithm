@@ -32,12 +32,12 @@ class MinHeap {
 
     bubbleUp() {
         let curIdx = this.heap.length - 1;
-
         let parentIdx = Math.floor((curIdx - 1) / 2);
+
         while (this.heap[parentIdx] > this.heap[curIdx]) {
             this.swap(curIdx, parentIdx);
-            curIdx = parentIdx;
 
+            curIdx = parentIdx;
             parentIdx = Math.floor((curIdx - 1) / 2);
         }
     }
