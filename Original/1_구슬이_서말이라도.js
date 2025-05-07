@@ -18,8 +18,8 @@ function solution(inputs) {
 
     let startIdx = pearls.indexOf("*");
     let lastIdx = pearls.lastIndexOf("*");
-    if (startIdx === -1 || startIdx === last) {
-        console.log(Array(slices.length).fill(0).join('\n'));
+    if (startIdx === -1 || startIdx === lastIdx) {
+        console.log(Array(slices.length).fill(0).join("\n"));
         return;
     }
 
@@ -27,19 +27,18 @@ function solution(inputs) {
     if (startIdx !== 0) parts.shift();
     if (lastIdx !== pearls.length - 1) parts.pop();
 
-    const areas = []; // {start, end, price}
+    const areas = []; // {point, price}
     let currentIndex = startIdx;
 
     for (const part of parts) {
-        const start = currentIndex;
-        const end = currentIndex + part.length + 1;
+        const point = currentIndex;
 
         let price = Array.from(part)
             .map((v) => +v)
             .reduce((a, c) => a + c, 0);
-        areas.push({ start, end, price });
+        areas.push({ point, price });
 
-        currentIndex = end;
+        currentIndex = currentIndex + part.length + 1;
     }
 
     const results = [];
@@ -48,26 +47,23 @@ function solution(inputs) {
         let sum = 0;
         let startPoint = 0;
         let endPoint = 0;
-        
+
         for (const area of areas) {
-            if (area.start < start && start < area.end) {
-                startPoint = area.end;
-            } else if (area.start === start) {
-                startPoint = area.start;
+            if (start <= area.point) {
+                startPoint = area.point;
+                break;
             }
-            if(area.start < end  && end < area.end) {
-                endPoint = area.start;
-            } else if (area.end === end) {
-                endPoint = area.end;
+        }
+        for (const area of areas.toReversed()) {
+            if (end >= area.point) {
+                endPoint = area.point;
+                break;
             }
         }
 
-        if(endPoint === 0) {
-            endPoint = areas.at(-1).end;
-        }
-
         for (const area of areas) {
-            if(area.start >= startPoint && area.start < endPoint) sum += area.price;
+            if (area.point >= startPoint && area.point < endPoint)
+                sum += area.price;
         }
 
         results.push(sum);
@@ -77,4 +73,4 @@ function solution(inputs) {
 }
 
 // solution(["20", "111*213*22*3*132**12", "4", "3 8", "10 18", "0 11", "4 9"]);
-solution(["20", "1231231*32123", "4", "3 8", "10 18", "0 11", "4 9"]);
+solution(["20", "***123123*********123123***", "4", "3 8", "1 100", "0 11", "4 9"]);
