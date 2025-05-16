@@ -1,77 +1,92 @@
 class Queue {
-  constructor() {
-    this.queue = [];
-    this.head = 0;
-    this.tail = 0;
-  }
+    constructor() {
+        this.arr = [];
+        this.head = 0;
+        this.tail = 0;
+    }
 
-  push(data) {
-    this.queue.push(data);
-    this.tail++;
-  }
+    push(x) {
+        this.arr.push(x);
+        this.tail++;
+    }
 
-  pop() {
-    return this.queue[this.head++];
-  }
+    pop() {
+        return this.arr[this.head++];
+    }
 
-  isEmpty() {
-    return this.head === this.tail;
-  }
+    isEmpty() {
+        return this.head === this.tail;
+    }
 }
 
 function solution(maps) {
-  const M = maps.length;
-  const N = maps[0].length;
+    const N = maps.length;
+    const M = maps[0].length;
 
-  const visited = Array.from({ length: M }, () =>
-    Array.from({ length: N }, () => Array.from({ length: 2 }, () => -1))
-  );
+    let start = [-1, -1];
 
-  let start = [-1, -1];
-  let exit = [-1, -1];
-
-  maps.forEach((row, i) => {
-    Array.from(row).forEach((v, j) => {
-      if (v === "S") start = [i, j];
-      if (v === "E") exit = [i, j];
+    maps.forEach((line, y) => {
+        for (let x = 0; x < M; x++) {
+            if (line[x] === "S") start = [y, x];
+            if (line[x] === "E") end = [y, x];
+            if (line[x] === "L") lever = [y, x];
+        }
     });
-  });
 
-  function _isValidMove(y, x) {
-    return y >= 0 && y < M && x >= 0 && x < N && maps[y][x] !== "X";
-  }
-
-  const queue = new Queue();
-
-  queue.push([...start, 0]); // y좌표, x좌표, lever 당겼는지 여부
-  visited[start[0]][start[1]][0] = 0;
-
-  const moves = [
-    [-1, 0],
-    [1, 0],
-    [0, -1],
-    [0, 1],
-  ];
-
-  while (!queue.isEmpty()) {
-    const [y, x, leverFlag] = queue.pop();
-
-    for (const [dy, dx] of moves) {
-      const [ny, nx] = [y + dy, x + dx];
-
-      if (_isValidMove(ny, nx) && visited[ny][nx][leverFlag] === -1) {
-        let newLeverFlag =
-          maps[ny][nx] === "L" ? 1 : leverFlag;
-
-        queue.push([ny, nx, newLeverFlag]);
-        visited[ny][nx][newLeverFlag] = visited[y][x][leverFlag] + 1;
-      }
+    function isValidMove(y, x, flag) {
+        return (
+            y >= 0 &&
+            y < N &&
+            x >= 0 &&
+            x < M &&
+            maps[y][x] !== "X" &&
+            visited[y][x][flag] < 0
+        );
     }
-  }
 
-  console.log(visited);
-  return visited[exit[0]][exit[1]][1];
+    const moves = [
+        [1, 0],
+        [-1, 0],
+        [0, 1],
+        [0, -1],
+    ];
+
+    const visited = Array.from({ length: N }, () =>
+        Array.from({ length: M }, () => Array(2).fill(-1))
+    );
+
+    visited[start[0]][start[1]][0] = 0;
+
+    const queue = new Queue();
+    queue.push([...start, 0]);
+
+    while (!queue.isEmpty()) {
+        let [y, x, flag] = queue.pop();
+
+        for (const [dy, dx] of moves) {
+            const [ny, nx] = [y + dy, x + dx];
+
+            
+            if (isValidMove(ny, nx, flag)) {
+                visited[ny][nx][flag] = visited[y][x][flag] + 1;
+
+                if (maps[ny][nx] === "L") {
+                    visited[ny][nx][1] = visited[y][x][0] + 1;
+                    queue.push([ny, nx, 1]);
+                    continue;
+                }
+                if(maps[ny][nx] === "E" && flag === 1) {
+                    return visited[y][x][flag] + 1;
+                }
+
+                queue.push([ny, nx, flag]);
+            }
+        }
+    }
+
+    return -1;
 }
 
-console.log(solution(["SOOOL", "XXXXO", "OOOOO", "OXXXX", "OOOOE"]));
-console.log(solution(["LOOXS", "OOOOX", "OOOOO", "OOOOO", "EOOOO"]));
+console.log(solution(["SOEOL"]));
+// console.log(solution(["SOOOL", "XXXXO", "OOOOO", "OXXXX", "OOOOE"]));
+// console.log(solution(["LOOXS", "OOOOX", "OOOOO", "OOOOO", "EOOOO"]));
