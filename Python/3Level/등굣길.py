@@ -2,7 +2,6 @@ from collections import deque
 
 
 def solution(m, n, puddles):
-    answer = 0
 
     puddleHash = set(
         list(map(lambda puddle: f"{puddle[1] - 1},{puddle[0] - 1}", puddles))
@@ -33,9 +32,13 @@ def solution(m, n, puddles):
             if _isValidMove(ny, nx):
                 queue.append([ny, nx])
                 if ny < n - 1:
-                    visited[ny][nx] += visited[ny + 1][nx] % 1_000_000_007
+                    visited[ny][nx] = (
+                        visited[ny][nx] + visited[ny + 1][nx]
+                    ) % 1_000_000_007
                 if nx < m - 1:
-                    visited[ny][nx] += visited[ny][nx + 1] % 1_000_000_007
+                    visited[ny][nx] = (
+                        visited[ny][nx] + visited[ny][nx + 1]
+                    ) % 1_000_000_007
 
     return visited[0][0]
 
