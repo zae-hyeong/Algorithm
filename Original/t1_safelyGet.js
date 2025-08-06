@@ -1,10 +1,23 @@
-function safelyGet(obj, path) {
+function safelyGet_1(obj, path) {
   return (function checkUndefined(obj, targetArr, depth) {
     if (targetArr.length === depth) return obj;
 
     if (obj instanceof Object)
       return checkUndefined(obj[targetArr[depth]], targetArr, depth + 1);
   })(obj, path.split("."), 0);
+}
+
+function safelyGet(obj, path) {
+  const properties = path.split('.');
+  let current = obj;
+
+  for(const property of properties) {
+    if (current  === undefined) return undefined;
+
+    current = current[property];
+  }
+
+  return current;
 }
 
 /* repository가 undefined인 경우 */
