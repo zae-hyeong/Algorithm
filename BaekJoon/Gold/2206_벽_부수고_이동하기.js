@@ -42,15 +42,16 @@ function solution(inputLines) {
     const dy = [1, 0, -1, 0];
     const dx = [0, 1, 0, -1];
 
-    return (function bfs() {
+    (function bfs() {
         const q = new Queue();
         q.push([0, 0, 1, 1]); // [y, x, canBreak, distance]
         visited[0][0][1] = 1;
+        const result = [];
 
         while (!q.isEmpty()) {
             const [y, x, canBreak, distance] = q.pop();
 
-            if (y === N - 1 && x === M - 1) return distance;
+            if(y === N - 1 && x === M - 1) result.push(distance);
 
             for (let i = 0; i < 4; i++) {
                 const [ny, nx] = [y + dy[i], x + dx[i]];
@@ -75,7 +76,10 @@ function solution(inputLines) {
             }
         }
 
-        return -1;
+        if(!result.length) 
+          console.log(-1);
+        else 
+          console.log(Math.min(...result));
     })();
 }
 
